@@ -24,7 +24,7 @@ const Hero = () => {
           <img 
             src={HeroImg} 
             alt='hero' 
-            className='w-full h-auto object-cover object-center  transition-transform duration-300 ease-in-out' 
+            className='w-[850px] h-[800px] object-cover object-center  transition-transform duration-300 ease-in-out' 
           />
         </div>
       </div>

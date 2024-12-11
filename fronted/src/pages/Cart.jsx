@@ -1,31 +1,59 @@
-import React,{useState,useContext,useEffect} from 'react'
-import { ShopContext } from '../context/ShopContext'
-import Tittle from '../components/Tittle'
+import React, { useState, useContext, useEffect } from 'react';
+import { ShopContext } from '../context/ShopContext';
+import Tittle from '../components/Tittle';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import CartTotal from '../components/CartTotal'
+import CartTotal from '../components/CartTotal';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'; // Use 'faTrashAlt' for the trash icon
 
+// Import images
+import image1 from '../assets/image1.jpg';
+import image2 from '../assets/image2.jpg';
+import image3 from '../assets/image3.jpg';
+import image4 from '../assets/image4.jpg';
+import image5 from '../assets/image5.jpg';
+import image6 from '../assets/image6.jpg';
+import image7 from '../assets/image7.jpg';
+import image8 from '../assets/image8.jpg';
 
-const Cart = () => { 
-  const {products,currency,cartItems,updateQuantity,navigate}=useContext(ShopContext)
 
-  const [cartData,setCartData] = useState([])
+// Map image names to imported images
+const imageMap = {
+  "image1.jpg": image1,
+  "image2.jpg": image2,
+  "image3.jpg": image3,
+  "image4.jpg": image4,
+  "image5.jpg": image5,
+  "image6.jpg": image6,
+  "image7.jpg": image7,
+  "image8.jpg": image8,
+  
+};
 
-  useEffect(()=>{
-    const tempData = [];
-    for(const items in cartItems) {
-      for(const item in cartItems[items]){
-        if(cartItems[items][item] > 0) {
-          tempData.push({
-            _id: items,
-            size:item,
-            quantity:cartItems[items][item]
-          })
+const Cart = () => {
+  const { products, currency, cartItems, updateQuantity, navigate } = useContext(ShopContext);
+  const [cartData, setCartData] = useState([]);
+
+  useEffect(() => {
+
+    if(products.length > 0){
+      const tempData = [];
+      for (const items in cartItems) {
+        for (const item in cartItems[items]) {
+          if (cartItems[items][item] > 0) {
+            tempData.push({
+              _id: items,
+              size: item,
+              quantity: cartItems[items][item]
+            });
+          }
         }
       }
+      setCartData(tempData);
+
     }
-    setCartData(tempData)
-  },[cartItems])
+   
+  }, [cartItems,products]);
+
   return (
     <div className='border-t pt-14'>
       <div className="text-2xl mb-3">
@@ -33,46 +61,48 @@ const Cart = () => {
       </div>
 
       <div>
-        {
-          cartData.map((item,index)=>{
-            const productData = products.find(product => product._id === item._id);
+        {cartData.map((item, index) => {
+          const productData = products.find(product => product._id === item._id);
 
-
-            return(
-              <div key={index} className='py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_0.5fr_0,5fr] sm:grid-[4fr_2fr_0.5fr] items-center gap-4'>
-                <div className='flex items-start gap-6'>
-                  <img className='w-16 sm:w-20' src={""} alt="" />
-                  <div>
-                
-                <p className='text-sm sm:text-lg font-medium'>{productData.name}</p>
-                <div className='flex items-center gap-5 mt-2'>
-                  <p>{currency}{productData.price}</p>
-                  <p className='px-2 sm:px-3 sm:py-1 border bg-slate-50'>{item.size}</p>
+          return (
+            <div key={index} className='py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4'>
+              <div className='flex items-start gap-6'>
+                {/* Image Display with Mapping */}
+                <img
+                  className='w-16 sm:w-20'
+                  src={imageMap[productData?.image] || ""} // Use image mapping
+                  alt={productData?.name || "Product Image"}
+                />
+                <div>
+                  <p className='text-sm sm:text-lg font-medium'>{productData?.name}</p>
+                  <div className='flex items-center gap-5 mt-2'>
+                    <p>{currency}{productData?.price}</p>
+                    <p className='px-2 sm:px-3 sm:py-1 border bg-slate-50'>{item.size}</p>
+                  </div>
                 </div>
-                </div>
-                </div>
-                <input className='border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1 ' type='number' min={1} defaultValue={item.quantity} />
-                <FontAwesomeIcon 
-               icon={faTrashAlt} 
-               onClick={() => updateQuantity(item._id, item.size, 0)} 
-               className='w-4 mr-4 sm:w-5 cursor-pointer' 
-/>
               </div>
-            )
-          })
-        }
+              <input className='border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1' type='number' min={1} defaultValue={item.quantity} onChange={(e) => updateQuantity(item._id, item.size, e.target.value)} />
+              <FontAwesomeIcon 
+                icon={faTrashAlt} 
+                onClick={() => updateQuantity(item._id, item.size, 0)} 
+                className='w-4 mr-4 sm:w-5 cursor-pointer' 
+              />
+            </div>
+          );
+        })}
       </div>
       <div className="flex justify-end my-20">
         <div className="w-full sm:w-[450px]">
           <CartTotal />
           <div className="w-full text-end">
-            <button onClick={()=>navigate('/place-order')} className='bg-black text-white text-sm my-8 px-8 py-3'>PROCEED TO CHECKOUT</button>
+            <button onClick={() => navigate('/place-order')} className='bg-black text-white text-sm my-8 px-8 py-3'>
+              PROCEED TO CHECKOUT
+            </button>
           </div>
         </div>
       </div>
-
     </div>
-  )
-}
+  );
+};
 
-export default Cart
+export default Cart;
